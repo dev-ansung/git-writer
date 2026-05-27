@@ -32,15 +32,22 @@ This process drops the operator into a terminal-based editor, requiring manual l
 
 ## Zero-Installation Quickstart
 
-Using the `uv` toolchain, `git-writer` can be executed instantly on any local repository without system-wide package installation:
+Using the `uv` toolchain, `git-writer` can be executed instantly on any local repository without system-wide package installation.
 
+### Web Interface Mode
+Exposes a premium local web interface design for visual, interactive timeline editing:
 ```bash
-uvx --from git+https://github.com/dev-ansung/git-writer git-writer [path-to-repository]
+uvx --from git+https://github.com/dev-ansung/git-writer git-writer [path-to-repo]
 ```
-
 *Note: If no path is specified, the application defaults to the current working directory.*
 
 Once the server initializes, open `http://127.0.0.1:8000` in your web browser.
+
+### Command-Line Editor Mode (`--cli`)
+Allows editing your Git history directly as a standard, familiar `git log` text file inside your terminal. It generates a standard `git-history.txt` log file in the current directory, waits for you to edit and save it in your preferred editor, and applies all changes atomically upon confirmation:
+```bash
+uvx --from git+https://github.com/dev-ansung/git-writer git-writer --cli [path-to-repo]
+```
 
 ---
 
@@ -86,10 +93,15 @@ npm run build
 cd ..
 ```
 
-### 3. Run the Local Server
-Start the backend service targeting your designated Git repository:
+### 3. Run Locally
+Start the application in your preferred mode targeting a designated Git repository:
+
 ```bash
-uv run git-writer /path/to/target/repository
+# To run in Web Interface Mode:
+uv run git-writer /path/to/target/repo
+
+# To run in Command-Line Editor Mode:
+uv run git-writer --cli /path/to/target/repo
 ```
 
 ---
