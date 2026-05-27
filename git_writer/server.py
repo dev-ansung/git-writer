@@ -77,6 +77,6 @@ def api_rewrite(request: RewriteRequest):
 
 # If the frontend has been built, serve it from the dist directory
 # (This is used when the package is distributed via uvx)
-FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "dist")
 if os.path.isdir(FRONTEND_DIST):
     app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="static")
