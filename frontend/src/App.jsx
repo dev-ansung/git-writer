@@ -348,7 +348,7 @@ function App() {
                           <span className="author-name">{commit.author_name}</span>
                           <span className="commit-time">{getCommittedInfo(commit)}</span>
                         </div>
-                        {!isOpen && commit.body && (
+                        {!isOpen && commit.body && commit.body.trim() && (
                           <pre className="commit-body-text">{commit.body}</pre>
                         )}
                       </div>

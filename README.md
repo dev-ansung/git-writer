@@ -2,6 +2,8 @@
 
 An interactive local web utility for viewing and modifying Git repository history. `git-writer` provides a visual interface to safely perform history rewrites, replacing complex manual interactive rebasing operations with a structured graphical editor.
 
+![Git History Writer Interface Preview](docs/preview.png)
+
 ---
 
 ## Motivation
