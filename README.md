@@ -1,84 +1,82 @@
-# Git History Writer (`git-writer`) ✍️
+# Git History Writer (`git-writer`)
 
-A sleek, premium, developer-focused standalone web interface designed to view and rewrite your Git repository history with absolute safety and visual ease.
+An interactive local web utility for viewing and modifying Git repository history. `git-writer` provides a visual interface to safely perform history rewrites, replacing complex manual interactive rebasing operations with a structured graphical editor.
 
 ---
 
-## 💡 Motivation: Why does this exist?
+## Motivation
 
-We've all been there:
-- You committed a batch of changes only to realize a typo in the second-to-last commit message.
-- You committed using your personal email instead of your work email (or vice versa).
-- You want to add trailing `Co-Authored-By` metadata to historical commits.
-- You need to shift commit dates to align with actual task delivery times.
+Managing commit metadata across repository history is frequently necessary but mechanically complex. Developers often need to adjust history to:
+* Correct typographical errors in historical commit messages.
+* Align author names and emails with organizational standards (e.g., correcting mismatched work/personal identities).
+* Append metadata elements like `Co-Authored-By` footers to older commits.
+* Adjust commit timestamps to reflect actual task completion times.
 
-### The Pain of Traditional Rebase
-Git's native `git commit --amend` only works on the single latest commit. To edit commits further back in history, you are forced to run:
+### Limitations of Standard Tooling
+Git's native `git commit --amend` is restricted to the latest commit. Modifying older commits traditionally requires executing:
 ```bash
 git rebase -i HEAD~n
 ```
-This drops you into a terminal editor, forces you to pick/edit lines, and frequently results in stressful merge conflicts, complex bash states, and the risk of corrupting your history if you make a mistake.
+This process drops the operator into a terminal-based editor, requiring manual line flags (`pick`, `edit`, `reword`). It is highly susceptible to syntax errors, command state confusion, and destructive history changes without simple recovery pathways.
 
-### The `git-writer` Solution
-`git-writer` replaces the intimidation of terminal rebases with a beautiful, high-fidelity **GitHub Primer-themed standalone web interface**. You can view your entire repository timeline in one fluid edge-to-edge view, click **Edit** on any commit, and modify:
-1. **Commit Messages** (including multi-line descriptions and co-author footers)
-2. **Author Names**
-3. **Author Emails**
-4. **Commit Dates** (using a simple visual picker or typing)
-
-It executes atomic Git history rewrites behind the scenes and **automatically backs up your repository** before every single action, keeping you 100% safe.
+### The git-writer Architecture
+`git-writer` solves this problem by exposing a clean, standalone local web interface running on top of FastAPI and React, designed in accordance with the GitHub Primer system. It allows developers to:
+1. View history chronologically inside an interactive timeline.
+2. Select any commit to modify its message, author details, email, timestamps, or co-author metadata.
+3. Validate and execute atomic Git history rewrites via a backend service.
+4. Maintain operational security through automatic, transparent repository backups prior to any disk mutation.
 
 ---
 
-## ⚡ Zero-Installation Quickstart
+## Zero-Installation Quickstart
 
-Thanks to the speed of [Astral `uv`](https://github.com/astral-sh/uv), you can run `git-writer` instantly on any local repository **without installing anything** on your system:
+Using the `uv` toolchain, `git-writer` can be executed instantly on any local repository without system-wide package installation:
 
 ```bash
-uvx --from git+https://github.com/dev-ansung/git-writer git-writer [path-to-your-repo]
+uvx --from git+https://github.com/dev-ansung/git-writer git-writer [path-to-repository]
 ```
 
-*If no path is specified, it defaults to the current working directory.*
+*Note: If no path is specified, the application defaults to the current working directory.*
 
-Once running, simply open **`http://127.0.0.1:8000`** in your browser to begin editing!
-
----
-
-## 🛡️ Uncompromising Safety First
-
-Rewriting Git history is an invasive operation. That's why `git-writer` is built with a **fail-safe backup mechanism**:
-
-- **Automatic Backups:** Before performing any history rewrite, `git-writer` compresses and copies your current `.git` directory to `.git/git-writer-backups/backup_[timestamp].tar.gz`.
-- **Easy Reversion:** If you make a mistake, change your mind, or encounter any conflict, your original repository state can be fully restored in seconds.
-- **Safety Logs:** The CLI outputs the exact path of the safety backup file before executing every rewrite.
+Once the server initializes, open `http://127.0.0.1:8000` in your web browser.
 
 ---
 
-## 🛠️ Built with a Premium Developer Aesthetic
+## Safety and Recovery Mechanisms
 
-`git-writer` is designed to feel like a premium, native developer tool:
-- **GitHub Primer Aesthetic:** A clean, crisp, minimalist light theme inspired by GitHub's official design system.
-- **Fully Fluid Edge-to-Edge Layout:** Optimizes wide-screen displays, presenting a wide, spacious timeline layout that fits long commit descriptions perfectly.
-- **Subpixel-Perfect Timeline Gutter:** A beautifully aligned commit connector timeline built with pure responsive CSS grid sizing (no fragile absolute pixel offsets).
+Rewriting Git history mutates the repository's DAG (Directed Acyclic Graph) and updates downstream commit hashes. To guarantee absolute data integrity, the application enforces the following lifecycle:
+
+1. **Automatic Backup Generation:** Before executing any rewrite, `git-writer` compresses the current active `.git/` directory and archives it to `.git/git-writer-backups/backup_[timestamp].tar.gz`.
+2. **Atomic Execution:** The history rewrite is executed programmatically. If any unexpected Git conflict occurs, the operation is aborted.
+3. **Restoration Pathway:** In the event of an unintended state change, the original repository metadata can be restored by expanding the archived backup tarball back into the root of the repository.
 
 ---
 
-## 🔧 Local Development
+## Design and Visual Standards
 
-If you'd like to run `git-writer` from source or contribute to its development:
+The user interface is built to native developer tool standards:
+* **Primer Design System:** Follows standard GitHub visual hierarchies, color variables, and interactive components.
+* **Fluid Layout:** Optimized for widescreen development monitors, featuring a 100% responsive fluid view that maximizes timeline readability.
+* **Centered Grid Spacing:** The visual commit timeline is governed by pure CSS grid alignments, ensuring subpixel-perfect node alignments across different viewports and zoom levels.
+
+---
+
+## Local Development and Contribution
+
+To run the codebase from source or set up a local development environment:
 
 ### Prerequisites
-- Install [uv](https://github.com/astral-sh/uv)
-- Install [Node.js](https://nodejs.org/) (for building the frontend)
+* [Astral uv](https://github.com/astral-sh/uv) (Python package manager)
+* [Node.js](https://nodejs.org/) (Frontend compiler)
 
-### 1. Clone the repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/dev-ansung/git-writer.git
 cd git-writer
 ```
 
-### 2. Build the Frontend
-Build the responsive React assets directly into the Python package directory:
+### 2. Compile Frontend Assets
+Build and package the production React files directly into the Python source distribution directory:
 ```bash
 cd frontend
 npm install
@@ -86,14 +84,14 @@ npm run build
 cd ..
 ```
 
-### 3. Run the Backend Server
-Launch the FastAPI service targeting any local git repository:
+### 3. Run the Local Server
+Start the backend service targeting your designated Git repository:
 ```bash
-uv run git-writer /path/to/your/git-repo
+uv run git-writer /path/to/target/repository
 ```
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License.
+This project is distributed under the MIT License. See `LICENSE` for details.
